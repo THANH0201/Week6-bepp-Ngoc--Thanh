@@ -19,13 +19,25 @@ const signupUser = async (req, res) => {
   if (!validator.isStrongPassword(password)) {
     return res.status(400).json({ error: "Password is too weak" });
   }
+  
   try {
     const user = await User.signup(name, email, password, phone_number, gender, date_of_birth, membership_status);
 
     // create a token
     const token = generateToken(user._id);
 
-    res.status(201).json({ email, token });
+    res.status(201).json({
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone_number: user.phone_number,
+        gender: user.gender,
+        date_of_birth: user.date_of_birth,
+        membership_status: user.membership_status,
+      },
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
